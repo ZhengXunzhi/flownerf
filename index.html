@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Flow-NeRF: Joint Learning of Geometry, Poses, and Dense Flow within Unified
+    Neural Representations.">
+    <!-- <meta name="keywords" content="Nerfies, D-NeRF, NeRF">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <title>Flow-NeRF: Joint Learning of Geometry, Poses, and Dense Flow within Unified
+        Neural Representations</title>
+
+    <!-- <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/index.css"> -->
+
+
+    <!-- <link href="./static/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="./static/js/fontawesome.all.min.js"></script>
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script src="./static/js/bulma-slider.min.js"></script>
+    <script src="./static/js/index.js"></script> -->
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="./static/css/tab_gallery.css">
+    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/index.css">
+    <link rel="stylesheet" href="juxtapose/css/juxtapose.css">
+    <link rel="stylesheet" href="./dics.original.css">
+    <script src="./dics.original.js"></script>
+    <link rel="stylesheet" href="./dics.original.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="./static/js/fontawesome.all.min.js"></script>
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script src="./static/js/bulma-slider.min.js"></script>
+    <script src="./static/js/index.js"></script>
+    <script src="./static/js/magnifier.js"></script>
+    <link href="https://fonts.cdnfonts.com/css/menlo" rel="stylesheet">
+    <link rel="stylesheet" href="./static/css/image_card_fader.css">
+    <link rel="stylesheet" href="./static/css/image_card_slider.css">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', domReady);
+
+        function domReady() {
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[0],
+                textPosition: 'top'
+            });
+
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[1],
+                hideTexts: true,
+                textPosition: 'center'
+            });
+
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[2]
+            });
+
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[3],
+                linesOrientation: 'vertical',
+                textPosition: 'left',
+                arrayBackgroundColorText: ['#000000', '#FFFFFF'],
+                arrayColorText: ['#FFFFFF', '#000000'],
+                linesColor: 'rgb(0,0,0)'
+            });
+
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[4],
+                linesOrientation: 'vertical',
+                textPosition: 'right'
+            });
+
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[5],
+                textPosition: 'bottom'
+            });
+
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[6],
+                filters: ['blur(3px)', 'grayscale(1)', 'sepia(1)', 'saturate(3)']
+            });
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[7],
+                rotate: '45deg'
+            });
+
+        }
+    </script>
+    <script type="text/javascript">
+        var x = 0;
+        var images = [
+            ["./static/images/scannet/scannet_0079_0006_nope.png",
+        "./static/images/scannet/scannet_0079_0006_ours.png",
+        "./static/images/scannet/scannet_0079_0006_nope_d.png",
+        "./static/images/scannet/scannet_0079_0006_ours_d.png"], 
+        ["./static/images/scannet/scannet_0301_0007_nope.png",
+        "./static/images/scannet/scannet_0301_0007_ours.png",
+        "./static/images/scannet/scannet_0301_0007_nope_d.png",
+        "./static/images/scannet/scannet_0301_0007_ours_d.png"],
+        ["./static/images/scannet/scannet_0418_0004_nope.png",
+        "./static/images/scannet/scannet_0418_0004_ours.png",
+        "./static/images/scannet/scannet_0418_0004_nope_d.png",
+        "./static/images/scannet/scannet_0418_0004_ours_d.png"],
+        ["./static/images/scannet/scannet_0431_0006_nope.png",
+        "./static/images/scannet/scannet_0431_0006_ours.png",
+        "./static/images/scannet/scannet_0431_0006_nope_d.png",
+        "./static/images/scannet/scannet_0431_0006_ours_d.png"],
+        ];
+        function ChangeImage() {
+            x = Math.floor(Math.random() * images.length);
+              document.getElementById("img1").src = images[x];
+        }
+        function displayNextImages() {
+              x = (x === images.length - 1) ? 0 : x + 1;
+              document.getElementById("img1").src = images[x][0];
+            document.getElementById("img2").src = images[x][1];
+            document.getElementById("img3").src = images[x][2];
+            document.getElementById("img4").src = images[x][3];
+      }
+
+        function displayPreviousImages() {
+            x = (x <= 0) ? images.length - 1 : x - 1;
+            document.getElementById("img1").src = images[x][0];
+            document.getElementById("img2").src = images[x][1];
+            document.getElementById("img3").src = images[x][2];
+            document.getElementById("img4").src = images[x][3];
+        }
+        function ChangeImages() {
+            x = Math.floor(Math.random() * images.length);
+              document.getElementById("img1").src = images[x][0];
+            document.getElementById("img2").src = images[x][1];
+            document.getElementById("img3").src = images[x][2];
+            document.getElementById("img4").src = images[x][3];
+        }
+
+        var images1 = [
+            ["./static/images/flow/0004_ballroom.png"
+            , "./static/images/flow/0004_ballroom_d.png",
+        "./static/images/flow/00036_00044_flow_ballroom.png",
+        "./static/images/flow/00036_00028_flow_ballroom.png"], 
+        ["./static/images/flow/0009_barn.png",
+        "./static/images/flow/0009_barn_d.png",
+        "./static/images/flow/00076_00084_flow_barn.png",
+        "./static/images/flow/00076_00068_flow_barn.png"],
+        ["./static/images/flow/0004_church.png",
+        "./static/images/flow/0004_church_d.png",
+        "./static/images/flow/00036_00044_flow_church.png",
+        "./static/images/flow/00036_00028_flow_church.png"],
+        ["./static/images/flow/0017_francis.png",
+        "./static/images/flow/0017_francis_d.png",
+        "./static/images/flow/00140_00148_flow_francis.png",
+        "./static/images/flow/00140_00132_flow_francis.png"],
+        ["./static/images/flow/0003_museum.png",
+        "./static/images/flow/0003_museum_d.png",
+        "./static/images/flow/00028_00036_flow_museum.png",
+        "./static/images/flow/00028_00020_flow_museum.png"],
+        ["./static/images/flow/0010_ignatius.png",
+        "./static/images/flow/0010_ignatius_d.png",
+        "./static/images/flow/00084_00092_flow_ignatius.png",
+        "./static/images/flow/00084_00076_flow_ignatius.png"],
+        ["./static/images/flow/0013_horse.png",
+        "./static/images/flow/0013_horse_d.png",
+        "./static/images/flow/00108_00116_flow_horse.png",
+        "./static/images/flow/00108_00100_flow_horse.png"],
+        ["./static/images/flow/0002_0431.png",
+        "./static/images/flow/0002_0431_d.png",
+        "./static/images/flow/00070_00078_flow_0431.png",
+        "./static/images/flow/00070_00062_flow_0431.png"],
+        ["./static/images/flow/0003_0418.png",
+        "./static/images/flow/0003_0418_d.png",
+        "./static/images/flow/00028_00036_flow_0418.png",
+        "./static/images/flow/00028_00020_flow_0418.png"],
+        ["./static/images/flow/0007_0079.png",
+        "./static/images/flow/0007_0079_d.png",
+        "./static/images/flow/00060_00068_flow_0079.png",
+        "./static/images/flow/00060_00052_flow_0079.png"],
+        ];
+        function ChangeImage1() {
+            x = Math.floor(Math.random() * images1.length);
+              document.getElementById("img5").src = images1[x];
+        }
+        function displayNextImages1() {
+              x = (x === images1.length - 1) ? 0 : x + 1;
+              document.getElementById("img5").src = images1[x][0];
+            document.getElementById("img6").src = images1[x][1];
+            document.getElementById("img7").src = images1[x][2];
+            document.getElementById("img8").src = images1[x][3];
+            // document.getElementById("pose").src = images[x][4];
+      }
+
+        function displayPreviousImages1() {
+            x = (x <= 0) ? images1.length - 1 : x - 1;
+            document.getElementById("img5").src = images1[x][0];
+            document.getElementById("img6").src = images1[x][1];
+            document.getElementById("img7").src = images1[x][2];
+            document.getElementById("img8").src = images1[x][3];
+            // document.getElementById("pose").src = images[x][4];
+        }
+        function ChangeImages1() {
+            x = Math.floor(Math.random() * images1.length);
+              document.getElementById("img5").src = images1[x][0];
+            document.getElementById("img6").src = images1[x][1];
+            document.getElementById("img7").src = images1[x][2];
+            document.getElementById("img8").src = images1[x][3];
+            // document.getElementById("pose").src = images[x][4];
+        }
+    </script>
+
+
+</head>
+
+<body>
+
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container is-max-desktop">
+                <div class="columns is-centered">
+                    <div class="column has-text-centered">
+                        <h1 class="title is-1 publication-title">Flow-NeRF: Joint Learning of Geometry, Poses, and Dense Flow within Unified
+                            Neural Representations</h1>
+                        <div class="is-size-5 publication-authors">
+                            <span class="author-block">Xunzhi Zheng &nbsp&nbsp&nbsp</span>
+                            <span class="author-block">Dan Xu</span>
+
+                        </div>
+    
+                        <div class="is-size-5 publication-authors">
+                            <span class="author-block">Department of Computer Science and Engineering, HKUST</span>
+                        </div>
+
+                        <div class="is-size-5 publication-authors">
+                            <span class="univerity-block" style="color: rgb(169, 16, 151);">CVPR 2025</span>
+                        </div>
+
+                        
+                        <div class="column has-text-centered">
+                            <div class="publication-links">
+                                <span class="link-block">
+                                    <a href=""
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="ai ai-arxiv"></i>
+                                        </span>
+                                        <span>arXiv</span>
+                                    </a>
+                                    <!-- <a href="https://arxiv.org/abs/2312.07504"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="ai ai-arxiv"></i>
+                                        </span>
+                                        <span>arXiv</span>
+                                    </a> -->
+                                </span>
+                                <!-- Video Link. -->
+                                <!-- <span class="link-block">
+                                    <a href="https://youtu.be/mGeVQS4ExK4?si=kqu3dbXopDdNg0wX"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fab fa-youtube"></i>
+                                        </span>
+                                        <span>Video</span>
+                                    </a>
+                                </span> -->
+                                <!-- <span class="link-block">
+                                    <a href="https://drive.google.com/file/d/17Vf8LeTreb7V3JXSCTfiROrHhgVWqzHy/view?usp=sharing"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fab fa-google-drive"></i>
+                                        </span>
+                                        <span>Slides</span>
+                                    </a>
+                                </span> -->
+                                <!-- Code Link. -->
+                                <span class="link-block">
+                                    <!-- <a href="https://github.com/NVlabs/CF-3DGS"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fab fa-github"></i>
+                                        </span>
+                                        <span>Code</span>
+                                    </a> -->
+                                    <a href=""
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fab fa-github"></i>
+                                        </span>
+                                        <span>Code (to be released)</span>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="hero teaser">
+        <div class="container is-max-desktop">
+            <!-- <div class="hero-body"> -->
+            <div class="has-text-justified">
+                <!-- <video id="teaser" autoplay muted loop playsinline height="100%">
+                    <source src="static/videos/3dgs_pose_teaser_small.mp4" type="video/mp4">
+                </video> -->
+                <p>
+                    Given an <strong>unposed</strong> image sequence, our Flow-NeRF model can simultaneously 
+                    infer novel-view image, novel-view depth, and long-range novel-view flow. In this figure, t+8
+                    and t-8 denote novel-view forward and backward flow, respectively, with a frame interval of 8.
+                </p>
+                <br>
+
+                <img src="./static/images/teaser.png">
+            </div>
+        </div>
+    </section>
+    
+    <section class="hero is-light is-small">
+        <div class="hero-body">
+            <div class="container is-max-desktop">
+                <!-- Abstract. -->
+                <div class="columns is-centered has-text-centered">
+                    <!-- <div class="column is-four-fifths"> -->
+                    <div class="column is-full-width">
+                        <h2 class="title is-3 has-text-centered">Abstract</h2>
+                        <div class="content has-text-justified">
+                        <p>
+                            Learning accurate scene reconstruction without pose priors
+                            in neural radiance fields is challenging due to inherent 
+                            geometric ambiguity. Recent development either relies
+                            on correspondence priors for regularization or uses 
+                            off-the-shelf flow estimators to derive analytical poses. 
+                            However, the potential for jointly learning scene geometry, 
+                            camera poses, and dense flow within a unified neural 
+                            representation remains largely unexplored. In this paper, 
+                            we present Flow-NeRF, a unified framework that simultaneously 
+                            optimizes scene geometry, camera poses, and dense optical flow
+                            all on-the-fly. To enable the learning of dense flow within
+                            the neural radiance field, we design and build a bijective
+                            mapping for flow estimation, conditioned on pose. To make
+                            the scene reconstruction benefit from the flow estimation,
+                            we develop an effective feature enhancement mechanism to
+                            pass canonical space features to world space representations, 
+                            significantly enhancing scene geometry. We validate
+                            our model across four important tasks, i.e., novel view synthesis, 
+                            depth estimation, camera pose prediction, and dense
+                            optical flow estimation, using several datasets. Our approach 
+                            surpasses previous methods in almost all metrics for
+                            novel-view view synthesis and depth estimation and yields
+                            both qualitatively sound and quantitatively accurate novel-view flow.
+                        </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Paper video. -->
+            </div>
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <!-- Method. -->
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full-width">
+                    <h2 class="title is-3 has-text-centered">Method</h2>
+                </div>
+            </div>
+            <img src="./static/images/method.png">
+        </div>
+        <div class="container is-max-desktop has-text-centered">
+            <div class="content has-text-justified">
+                <br>
+                <p>
+                    Our method takes a sequence of images as input and jointly learns camera poses, scene
+                    geometry, and dense optical flow with a unified neural representation framework. 
+                    We propose a shared points sampling mechanism to ensure the feature consistency 
+                    between the geometry and flow branches. We build a bijective mapping to query per-pixel motion
+                    given sampled points as input, conditioned on pose. Leveraging the complementary nature 
+                    of features between the world space and the 3D canonical volume, we enhance the 
+                    feature representation of the geometry branch by message passing. We also develop
+                    effective loss functions to simultaneously learn flow and scene reconstruction, 
+                    while imposing constraints on relative poses.
+                </p>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+          <div class="container is-max-desktop has-text-centered">
+            <div class="column is-full-width">
+                <h2 class="title is-3 has-text-centered">Novel View Synthesis and Depth Estimatin</h2>
+            </div>
+
+            <div class="content has-text-justified">
+    
+                <p>
+                    The proposed flow-enhanced NeRF can largely improve the novel-view synthesis and depth estimation results.
+                </p>
+            </div>
+            <!-- The expanding image container -->
+            <div class="tab_container">
+              <!-- Close the image -->
+              <!-- <span onclick="this.parentElement.style.display='none'" class="closebtn">&times;</span> -->
+      
+              <!-- Expanded image -->
+              <div id="juxtapose-embed" data-startingposition="30%" data-animate="true">
+              </div>
+      
+              <div>
+                <div id="juxtapose-hidden"></div>
+              </div>
+              
+              <!-- Image text -->
+              <div id="imgtext"></div>
+            </div>
+      
+            <!-- The grid: four columns -->
+            <div class="tab_row">
+              <div class="tab_column">
+                <img src="./static/images/tanks_ballroom_0012_gt.png" onclick="tab_gallery_click('tanks_ballroom_0012');">
+              </div>
+              <div class="tab_column">
+                <img src="./static/images/tanks_barn_0009_gt.png"  onclick="tab_gallery_click('tanks_barn_0009');">
+              </div>
+              <div class="tab_column">
+                <img src="./static/images/tanks_church_0025_gt.png"  onclick="tab_gallery_click('tanks_church_0025');">
+              </div>
+              <div class="tab_column">
+                <img src="./static/images/tanks_francis_0017_gt.png"  onclick="tab_gallery_click('tanks_francis_0017');">
+              </div>
+              <div class="tab_column">
+                <img src="./static/images/tanks_family_0057_gt.png"  onclick="tab_gallery_click('tanks_family_0057');">
+              </div>
+              <div class="tab_column">
+                <img src="./static/images/tanks_horse_0003_gt.png"  onclick="tab_gallery_click('tanks_horse_0003');">
+              </div>
+              <div class="tab_column">
+                <img src="./static/images/tanks_ignatius_0008_gt.png"  onclick="tab_gallery_click('tanks_ignatius_0008');">
+              </div>
+              <div class="tab_column">
+                <img src="./static/images/tanks_museum_0011_gt.png"  onclick="tab_gallery_click('tanks_museum_0011');">
+              </div>
+              <!-- <div class="tab_column">
+                <img src="./static/images/co3d_apple_2_0000_nope.png"  onclick="tab_gallery_click('co3d_apple_2_0000');">
+              </div> -->
+              <!-- <div class="tab_column">
+                <img src="./static/images/scannet_0079_0006_gt.png"  onclick="tab_gallery_click('scannet_0079_0006');">
+              </div>
+              <div class="tab_column">
+                <img src="./static/images/scannet_0301_0007_gt.png"  onclick="tab_gallery_click('scannet_0301_0007');">
+              </div>
+              <div class="tab_column">
+                <img src="./static/images/scannet_0418_0004_gt.png"  onclick="tab_gallery_click('scannet_0418_0004');">
+              </div>
+              <div class="tab_column">
+                <img src="./static/images/scannet_0431_0006_gt.png"  onclick="tab_gallery_click('scannet_0431_0006');">
+              </div> -->
+              <!-- <div class="tab_column">
+                <img src="./static/images/co3d_skate_2_0001_nope.png"  onclick="tab_gallery_click('co3d_skate_2_0001');">
+              </div> -->
+            </div>
+            <br>
+
+            <div class="polaroid" style="padding-bottom: 40px">
+                <div style="padding: 0px 0px;", class="center">
+                    <div class="b-dics" >
+                        <img id="img1" src="./static/images/scannet/scannet_0079_0006_nope.png" alt="Nope-NeRF">
+                        <img id="img2" src="./static/images/scannet/scannet_0079_0006_ours.png" alt="Ours">
+                        <img id="img3" src="./static/images/scannet/scannet_0079_0006_nope_d.png" alt="Nope-NeRF">
+                        <img id="img4" src="./static/images/scannet/scannet_0079_0006_ours_d.png" alt="Ours">
+                    </div>		
+                </div>
+        
+                <!-- <div class="center" style="padding: 0px 0px;">
+                    <img src="imgs/pose_ig.png"  id="pose" alt="poses" style="width:1200px;">
+                </div> -->
+                <div style="padding: 0px 0px;">
+                <!-- <button type="button" class="btn btn-outline-dark" onclick="ChangeImages()">Change</button> -->
+                <div class="pos_left" >
+                <button type="button" class="btn btn-outline-dark" onclick="displayPreviousImages()">&#10094 Previous</button>
+                </div>
+                <div class="pos_right">
+                <button type="button" class="btn btn-outline-dark" onclick="displayNextImages()">Next &#10095</button>
+                </div>
+            </div>
+          </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+          <div class="container is-max-desktop has-text-centered">
+            <div class="column is-full-width">
+                <h2 class="title is-3 has-text-centered">Long-range flow prediction</h2>
+            </div>
+
+            <div class="content has-text-justified">
+    
+                <p>
+                    Our model achieves holistic scene modelling by simultaneously inferring 2D appearance, 
+                    3D geometry, and dense novel-veiw flow. Scroll the bar to see the novel-view image, depth, and 
+                    t+8, t-8 flow predictions from left to right.
+                </p>
+            </div>
+
+            <div class="polaroid" style="padding-bottom: 40px">
+                <div style="padding: 0px 0px;", class="center">
+                    <div class="b-dics" >
+                        <img id="img5" src="./static/images/flow/0004_ballroom.png" alt="RGB">
+                        <img id="img6" src="./static/images/flow/0004_ballroom_d.png" alt="Depth">
+                        <img id="img7" src="./static/images/flow/00036_00044_flow_ballroom.png" alt="t+8 flow">
+                        <img id="img8" src="./static/images/flow/00036_00028_flow_ballroom.png" alt="t-8 flow">
+                    </div>		
+                </div>
+        
+                <!-- <div class="center" style="padding: 0px 0px;">
+                    <img src="imgs/pose_ig.png"  id="pose" alt="poses" style="width:1200px;">
+                </div> -->
+                <div style="padding: 0px 0px;">
+                <!-- <button type="button" class="btn btn-outline-dark" onclick="ChangeImages()">Change</button> -->
+                <div class="pos_left" >
+                <button type="button" class="btn btn-outline-dark" onclick="displayPreviousImages1()">&#10094 Previous</button>
+                </div>
+                <div class="pos_right">
+                <button type="button" class="btn btn-outline-dark" onclick="displayNextImages1()">Next &#10095</button>
+                </div>
+            </div>
+          </div>
+        </div>
+
+
+
+    <section class="section" id="BibTeX">
+        <div class="container is-max-desktop content">
+            <h2 class="title">BibTeX</h2>
+            <pre><code>
+                @InProceedings {zheng2025flownerf,
+                    author    = {Xunzhi Zheng and Dan Xu},
+                    title     = {Flow-NeRF: Joint Learning of Geometry, Poses, and Dense Flow within Unified
+                                Neural Representations},
+                    journal   = {CVPR},
+                    year      = {2025}}
+        </code></pre>
+        </div>
+    </section>  
+
+ 
+      
+    <footer class="footer">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="content">
+                    <p>
+                        The template is borrowed from 
+                        <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>, 
+                        <a href="https://oasisyang.github.io/colmap-free-3dgs/">CF-3DGS</a>, 
+                        and <a href="https://nope-nerf.active.vision/">Nope-NeRF</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="juxtapose/js/juxtapose.js"></script>
+
+    <script>
+        var slider;
+        let origImages = [
+        {"src": "./static/images/tanks_ballroom_0012_nope.png", "label": "Nope-NeRF",},
+        {"src": "./static/images/tanks_ballroom_0012_ours.png", "label": "Ours",}
+        ];
+        let origOptions = {
+            "makeResponsive": true,
+            "showLabels": true,
+            "mode": "horizontal",
+            "showCredits": true,
+            "animate": true,
+            "startingPosition": "50"
+        };
+
+        const juxtaposeSelector = "#juxtapose-embed";
+        const transientSelector = "#juxtapose-hidden";
+
+
+        function tab_gallery_click(name) {
+        // Get the expanded image
+        let inputImage = {
+            label: "Nope-NeRF",
+        };
+        let outputImage = {
+            label: "Ours",
+        };
+
+        inputImage.src = "./static/images/".concat(name, "_nope.png")
+        outputImage.src = "./static/images/".concat(name, "_ours.png")
+
+        let images = [inputImage, outputImage];
+        let options = slider.options;
+        options.callback = function(obj) {
+            var newNode = document.getElementById(obj.selector.substring(1));
+            var oldNode = document.getElementById(juxtaposeSelector.substring(1));
+            console.log(obj.selector.substring(1));
+            console.log(newNode.children[0]);
+            oldNode.replaceChild(newNode.children[0], oldNode.children[0]);
+            //newNode.removeChild(newNode.children[0]);
+            
+        };
+        
+        slider = new juxtapose.JXSlider(transientSelector, images, options);
+        };
+
+
+
+        (function() {
+            slider = new juxtapose.JXSlider(
+                juxtaposeSelector, origImages, origOptions);
+            //document.getElementById("left-button").onclick = replaceLeft;
+            //document.getElementById("right-button").onclick = replaceRight;
+        })();
+        // Get the image text
+        var imgText = document.getElementById("imgtext");
+        // Use the same src in the expanded image as the image being clicked on from the grid
+        // expandImg.src = imgs.src;
+        // Use the value of the alt attribute of the clickable image as text inside the expanded image
+        imgText.innerHTML = name;
+        // Show the container element (hidden with CSS)
+        // expandImg.parentElement.style.display = "block";
+
+        $(".flip-card").click(function() {
+                    console.log("fading in")
+                    div_back = $(this).children().children()[1]
+                    div_front = $(this).children().children()[0]
+                    // console.log($(this).children("div.flip-card-back"))
+                    console.log(div_back)
+                    $(div_front).addClass("out");
+                    $(div_front).removeClass("in");
+
+                    $(div_back).addClass("in");
+                    $(div_back).removeClass("out");
+
+        });
+
+        $(".flip-card").mouseleave(function() {
+                    console.log("fading in")
+                    div_back = $(this).children().children()[1]
+                    div_front = $(this).children().children()[0]
+                    // console.log($(this).children("div.flip-card-back"))
+                    console.log(div_back)
+                    $(div_front).addClass("in");
+                    $(div_front).removeClass("out");
+
+                    $(div_back).addClass("out");
+                    $(div_back).removeClass("in");
+
+        });
+    </script>
+        
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>  
+
+</body>
+
+</html>
