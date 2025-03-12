@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Flow-NeRF: Joint Learning of Geometry, Poses, and Dense Flow within Unified
+    Neural Representations.">
+    <!-- <meta name="keywords" content="Nerfies, D-NeRF, NeRF">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <title>Flow-NeRF: Joint Learning of Geometry, Poses, and Dense Flow within Unified
+        Neural Representations</title>
+
+    <!-- <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/index.css"> -->
+
+
+    <!-- <link href="./static/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="./static/js/fontawesome.all.min.js"></script>
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script src="./static/js/bulma-slider.min.js"></script>
+    <script src="./static/js/index.js"></script> -->
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="./static/css/tab_gallery.css">
+    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/index.css">
+    <link rel="stylesheet" href="juxtapose/css/juxtapose.css">
+    <link rel="stylesheet" href="./dics.original.css">
+    <script src="./dics.original.js"></script>
+    <link rel="stylesheet" href="./dics.original.css">
+
+
+    <!-- Image Comparison Slider -->
+    <!-- https://github.com/sneas/img-comparison-slider -->
+    <script defer src="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/styles.css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="./static/js/fontawesome.all.min.js"></script>
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script src="./static/js/bulma-slider.min.js"></script>
+    <script src="./static/js/index.js"></script>
+    <script src="./static/js/magnifier.js"></script>
+    <link href="https://fonts.cdnfonts.com/css/menlo" rel="stylesheet">
+    <link rel="stylesheet" href="./static/css/image_card_fader.css">
+    <link rel="stylesheet" href="./static/css/image_card_slider.css">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', domReady);
+
+        function domReady() {
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[0],
+                textPosition: 'top'
+            });
+
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[1],
+                hideTexts: true,
+                textPosition: 'center'
+            });
+
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[2]
+            });
+
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[3],
+                linesOrientation: 'vertical',
+                textPosition: 'left',
+                arrayBackgroundColorText: ['#000000', '#FFFFFF'],
+                arrayColorText: ['#FFFFFF', '#000000'],
+                linesColor: 'rgb(0,0,0)'
+            });
+
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[4],
+                linesOrientation: 'vertical',
+                textPosition: 'right'
+            });
+
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[5],
+                textPosition: 'bottom'
+            });
+
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[6],
+                filters: ['blur(3px)', 'grayscale(1)', 'sepia(1)', 'saturate(3)']
+            });
+            new Dics({
+                container: document.querySelectorAll('.b-dics')[7],
+                rotate: '45deg'
+            });
+
+        }
+    </script>
+  <style>
+    .image-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .image-container img {
+        display: block; /* Remove bottom space */
+    }
+
+    .label {
+            position: absolute;
+            font-size: 10px; /* Font size */
+            color: white; /* Text color */
+    }
+
+    .label-left {
+            bottom: 6px; /* Distance from the bottom */
+            left: 10px; /* Distance from the left */
+    }
+
+    .label-right {
+            bottom: 10px; /* Distance from the bottom */
+            right: 10px; /* Distance from the right */
+    }
+
+  </style>
+
+
+</head>
+
+<body>
+
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container is-max-desktop">
+                <div class="columns is-centered">
+                    <div class="column has-text-centered">
+                        <h1 class="title is-1 publication-title">Flow-NeRF: Joint Learning of Geometry, Poses, and Dense Flow within Unified
+                            Neural Representations</h1>
+                        <div class="is-size-5 publication-authors">
+                            <span class="author-block">Xunzhi Zheng &nbsp&nbsp&nbsp</span>
+                            <span class="author-block">Dan Xu</span>
+
+                        </div>
+    
+                        <div class="is-size-5 publication-authors">
+                            <span class="author-block">Department of Computer Science and Engineering, HKUST</span>
+                        </div>
+
+                        <div class="is-size-5 publication-authors">
+                            <span class="univerity-block" style="color: rgb(169, 16, 151);">CVPR 2025</span>
+                        </div>
+
+                        
+                        <div class="column has-text-centered">
+                            <div class="publication-links">
+                                <span class="link-block">
+                                    <a href=""
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="ai ai-arxiv"></i>
+                                        </span>
+                                        <span>arXiv</span>
+                                    </a>
+                                    <!-- <a href="https://arxiv.org/abs/2312.07504"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="ai ai-arxiv"></i>
+                                        </span>
+                                        <span>arXiv</span>
+                                    </a> -->
+                                </span>
+                                <!-- Video Link. -->
+                                <!-- <span class="link-block">
+                                    <a href="https://youtu.be/mGeVQS4ExK4?si=kqu3dbXopDdNg0wX"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fab fa-youtube"></i>
+                                        </span>
+                                        <span>Video</span>
+                                    </a>
+                                </span> -->
+                                <!-- <span class="link-block">
+                                    <a href="https://drive.google.com/file/d/17Vf8LeTreb7V3JXSCTfiROrHhgVWqzHy/view?usp=sharing"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fab fa-google-drive"></i>
+                                        </span>
+                                        <span>Slides</span>
+                                    </a>
+                                </span> -->
+                                <!-- Code Link. -->
+                                <span class="link-block">
+                                    <!-- <a href="https://github.com/NVlabs/CF-3DGS"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fab fa-github"></i>
+                                        </span>
+                                        <span>Code</span>
+                                    </a> -->
+                                    <a href=""
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fab fa-github"></i>
+                                        </span>
+                                        <span>Code (to be released)</span>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="hero teaser">
+        <div class="container is-max-desktop">
+            <!-- <div class="hero-body"> -->
+            <div class="has-text-justified">
+                <!-- <video id="teaser" autoplay muted loop playsinline height="100%">
+                    <source src="static/videos/3dgs_pose_teaser_small.mp4" type="video/mp4">
+                </video> -->
+                <p>
+                    Given an <strong>unposed</strong> image sequence, our Flow-NeRF model can simultaneously 
+                    infer novel-view image, novel-view depth, and long-range novel-view flow. In this figure, t+8
+                    and t-8 denote novel-view forward and backward flow, respectively, with a frame interval of 8.
+                </p>
+                <br>
+
+                <img src="./static/images/teaser.png">
+            </div>
+        </div>
+    </section>
+    
+    <section class="hero is-light is-small">
+        <div class="hero-body">
+            <div class="container is-max-desktop">
+                <!-- Abstract. -->
+                <div class="columns is-centered has-text-centered">
+                    <!-- <div class="column is-four-fifths"> -->
+                    <div class="column is-full-width">
+                        <h2 class="title is-3 has-text-centered">Abstract</h2>
+                        <div class="content has-text-justified">
+                        <p>
+                            Learning accurate scene reconstruction without pose priors
+                            in neural radiance fields is challenging due to inherent 
+                            geometric ambiguity. Recent development either relies
+                            on correspondence priors for regularization or uses 
+                            off-the-shelf flow estimators to derive analytical poses. 
+                            However, the potential for jointly learning scene geometry, 
+                            camera poses, and dense flow within a unified neural 
+                            representation remains largely unexplored. In this paper, 
+                            we present Flow-NeRF, a unified framework that simultaneously 
+                            optimizes scene geometry, camera poses, and dense optical flow
+                            all on-the-fly. To enable the learning of dense flow within
+                            the neural radiance field, we design and build a bijective
+                            mapping for flow estimation, conditioned on pose. To make
+                            the scene reconstruction benefit from the flow estimation,
+                            we develop an effective feature enhancement mechanism to
+                            pass canonical space features to world space representations, 
+                            significantly enhancing scene geometry. We validate
+                            our model across four important tasks, i.e., novel view synthesis, 
+                            depth estimation, camera pose prediction, and dense
+                            optical flow estimation, using several datasets. Our approach 
+                            surpasses previous methods in almost all metrics for
+                            novel-view view synthesis and depth estimation and yields
+                            both qualitatively sound and quantitatively accurate novel-view flow.
+                        </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Paper video. -->
+            </div>
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <!-- Method. -->
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full-width">
+                    <h2 class="title is-3 has-text-centered">Method</h2>
+                </div>
+            </div>
+            <img src="./static/images/method.png">
+        </div>
+        <div class="container is-max-desktop has-text-centered">
+            <div class="content has-text-justified">
+                <br>
+                <p>
+                    Our method takes a sequence of images as input and jointly learns camera poses, scene
+                    geometry, and dense optical flow with a unified neural representation framework. 
+                    We propose a shared points sampling mechanism to ensure the feature consistency 
+                    between the geometry and flow branches. We build a bijective mapping to query per-pixel motion
+                    given sampled points as input, conditioned on pose. Leveraging the complementary nature 
+                    of features between the world space and the 3D canonical volume, we enhance the 
+                    feature representation of the geometry branch by message passing. We also develop
+                    effective loss functions to simultaneously learn flow and scene reconstruction, 
+                    while imposing constraints on relative poses.
+                </p>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full-width">
+                    <h2 class="title is-3 has-text-centered">Novel-view synthesis</h2>
+                </div>
+            </div>
+            <p>
+                The proposed flow-enhanced NeRF can generate more photo-realistic novel view images.
+            </p>
+            <br>
+          <div class="columns is-centered">
+            <div class="column">
+              <div class="content">
+                <!-- <h2 class="title is-4">Comparison to 3DGS</h2>
+                <p>
+                  Our NeRF-based initialization and supervision leads to more stable and higher-quality view synthesis compared to 3DGS.
+                </p> -->
+                <img-comparison-slider style="width: 100%;" hover="hover" >
+                <span slot="first" class="img-container">
+                  <img src="static/images/tanks_ballroom_0012_nope.png" width="100%">
+                  <!-- <span class="bottom-left">3DGS</span> -->
+                  <div class="label label-left">Nope-NeRF</div>
+                </span>
+                <span slot="second" class="img-container">
+                  <img src="static/images/tanks_ballroom_0012_ours.png" width="100%">
+                  <div class="label label-right">Ours</div>
+                </span>
+                </img-comparison-slider>
+                <img-comparison-slider style="width: 100%;" hover="hover" >
+                <span slot="first" class="img-container">
+                  <img src="static/images/tanks_barn_0009_nope.png" width="100%">
+                  <!-- <span class="bottom-left">3DGS</span> -->
+                  <div class="label label-left">Nope-NeRF</div>
+                </span>
+                <span slot="second" class="img-container">
+                  <img src="static/images/tanks_barn_0009_ours.png" width="100%">
+                  <div class="label label-right">Ours</div>
+                </span>
+                </img-comparison-slider>
+                <img-comparison-slider style="width: 100%;" hover="hover" >
+                <span slot="first" class="img-container">
+                  <img src="static/images/tanks_francis_0017_nope.png" width="100%">
+                  <!-- <span class="bottom-left">3DGS</span> -->
+                  <div class="label label-left">Nope-NeRF</div>
+                </span>
+                <span slot="second" class="img-container">
+                  <img src="static/images/tanks_francis_0017_ours.png" width="100%">
+                  <div class="label label-right">Ours</div>        
+                </span>
+                </img-comparison-slider>
+                <img-comparison-slider style="width: 100%;" hover="hover" >
+                <span slot="first" class="img-container">
+                  <img src="static/images/tanks_museum_0004_nope.png" width="100%">
+                  <!-- <span class="bottom-left">3DGS</span> -->
+                  <div class="label label-left">Nope-NeRF</div>
+                </span>
+                <span slot="second" class="img-container">
+                  <img src="static/images/tanks_museum_0004_ours.png" width="100%">
+                  <div class="label label-right">Ours</div>        
+                </span>
+                </img-comparison-slider>
+                <img-comparison-slider style="width: 100%;" hover="hover" >
+              <span slot="first" class="img-container">
+                <img src="static/images/scannet/scannet_0431_0006_nope.png" width="100%">
+                <div class="label label-left">Nope-NeRF</div>
+              </span>
+              <span slot="second" class="img-container">
+                <img src="static/images/scannet/scannet_0431_0006_ours.png" width="100%">
+                <div class="label label-right">Ours</div>
+                </span>
+                </img-comparison-slider>
+              </div>
+            </div>
+            <div class="column">
+              <div class="columns is-centered">
+                <div class="column content">
+                  <!-- <h2 class="title is-4">Comparison to ZipNeRF</h2>
+                  <p>
+                    We achieve higher SSIM and LPIPS than ZipNeRF on the Mip-NeRF360 benchmark while rendering 3000x faster.
+                  </p> -->
+                  <img-comparison-slider style="width: 100%;" hover="hover" >
+                  <span slot="first" class="img-container">
+                      <img src="static/images/tanks_church_0025_nope.png" width="100%">
+                      <div class="label label-left">Nope-NeRF</div>
+                    </span>
+                    <span slot="second" class="img-container">
+                      <img src="static/images/tanks_church_0025_ours.png" width="100%">
+                      <div class="label label-right">Ours</div>
+                  </span>
+                  </img-comparison-slider>
+                  <img-comparison-slider style="width: 100%;" hover="hover" >
+                  <span slot="first" class="img-container">
+                      <img src="static/images/tanks_family_0057_nope.png" width="100%">
+                      <div class="label label-left">Nope-NeRF</div>
+                    </span>
+                    <span slot="second" class="img-container">
+                      <img src="static/images/tanks_family_0057_ours.png" width="100%">
+                      <div class="label label-right">Ours</div>
+                  </span>
+                  </img-comparison-slider>
+                  <img-comparison-slider style="width: 100%;" hover="hover" >
+                  <span slot="first" class="img-container">
+                      <img src="static/images/tanks_ignatius_0008_nope.png" width="100%">
+                      <div class="label label-left">Nope-NeRF</div>
+                    </span>
+                    <span slot="second" class="img-container">
+                      <img src="static/images/tanks_ignatius_0008_ours.png" width="100%">
+                      <div class="label label-right">Ours</div>
+                  </span>
+                  </img-comparison-slider>
+                  <img-comparison-slider style="width: 100%;" hover="hover" >
+                  <span slot="first" class="img-container">
+                      <img src="static/images/tanks_horse_0006_nope.png" width="100%">
+                      <div class="label label-left">Nope-NeRF</div>
+                    </span>
+                    <span slot="second" class="img-container">
+                      <img src="static/images/tanks_horse_0006_ours.png" width="100%">
+                      <div class="label label-right">Ours</div>
+                  </span>
+                  </img-comparison-slider>
+                  <img-comparison-slider style="width: 100%;" hover="hover" >
+                  <span slot="first" class="img-container">
+                      <img src="static/images/scannet/scannet_0079_0006_nope.png" width="100%">
+                      <div class="label label-left">Nope-NeRF</div>
+                    </span>
+                    <span slot="second" class="img-container">
+                      <img src="static/images/scannet/scannet_0079_0006_ours.png" width="100%">
+                      <div class="label label-right">Ours</div>
+                  </span>
+                  </img-comparison-slider>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full-width">
+                    <h2 class="title is-3 has-text-centered">Depth estimation</h2>
+                </div>
+            </div>
+            <p>
+                Our model can produce smoother depth map with lesser artifact.
+            </p>
+            <br>
+            <div class="columns is-centered">
+              <div class="column">
+                <div class="content">
+                  <img-comparison-slider style="width: 100%;" hover="hover" >
+                  <span slot="first" class="img-container">
+                    <img src="static/images/tanks_ballroom_0012_nope_d.png" width="100%">
+                    <!-- <span class="bottom-left">3DGS</span> -->
+                    <div class="label label-left">Nope-NeRF</div>
+                  </span>
+                  <span slot="second" class="img-container">
+                    <img src="static/images/tanks_ballroom_0012_ours_d.png" width="100%">
+                    <div class="label label-right">Ours</div>
+                  </span>
+                  </img-comparison-slider>
+                  <img-comparison-slider style="width: 100%;" hover="hover" >
+                  <span slot="first" class="img-container">
+                    <img src="static/images/tanks_barn_0009_nope_d.png" width="100%">
+                    <!-- <span class="bottom-left">3DGS</span> -->
+                    <div class="label label-left">Nope-NeRF</div>
+                  </span>
+                  <span slot="second" class="img-container">
+                    <img src="static/images/tanks_barn_0009_ours_d.png" width="100%">
+                    <div class="label label-right">Ours</div>
+                  </span>
+                  </img-comparison-slider>
+                  <img-comparison-slider style="width: 100%;" hover="hover" >
+                  <span slot="first" class="img-container">
+                    <img src="static/images/scannet/scannet_0079_0006_nope_d.png" width="100%">
+                    <!-- <span class="bottom-left">3DGS</span> -->
+                    <div class="label label-left">Nope-NeRF</div>
+                  </span>
+                  <span slot="second" class="img-container">
+                    <img src="static/images/scannet/scannet_0079_0006_ours_d.png" width="100%">
+                    <div class="label label-right">Ours</div>
+                  </span>
+                  </img-comparison-slider>
+                  <img-comparison-slider style="width: 100%;" hover="hover" >
+                <span slot="first" class="img-container">
+                  <img src="static/images/scannet/scannet_0301_0007_nope_d.png" width="100%">
+                  <div class="label label-left">Nope-NeRF</div>
+                </span>
+                <span slot="second" class="img-container">
+                  <img src="static/images/scannet/scannet_0301_0007_ours_d.png" width="100%">
+                  <div class="label label-right">Ours</div>
+                  </span>
+                  </img-comparison-slider>
+                </div>
+              </div>
+              <div class="column">
+                <div class="columns is-centered">
+                  <div class="column content">
+                    <img-comparison-slider style="width: 100%;" hover="hover" >
+                    <span slot="first" class="img-container">
+                        <img src="static/images/tanks_francis_0017_nope_d.png" width="100%">
+                        <div class="label label-left">Nope-NeRF</div>
+                      </span>
+                      <span slot="second" class="img-container">
+                        <img src="static/images/tanks_francis_0017_ours_d.png" width="100%">
+                        <div class="label label-right">Ours</div>
+                    </span>
+                    </img-comparison-slider>
+                    <img-comparison-slider style="width: 100%;" hover="hover" >
+                    <span slot="first" class="img-container">
+                        <img src="static/images/tanks_church_0025_nope_d.png" width="100%">
+                        <div class="label label-left">Nope-NeRF</div>
+                      </span>
+                      <span slot="second" class="img-container">
+                        <img src="static/images/tanks_church_0025_ours_d.png" width="100%">
+                        <div class="label label-right">Ours</div>
+                    </span>
+                    </img-comparison-slider>
+                    <img-comparison-slider style="width: 100%;" hover="hover" >
+                    <span slot="first" class="img-container">
+                        <img src="static/images/scannet/scannet_0418_0004_nope_d.png" width="100%">
+                        <div class="label label-left">Nope-NeRF</div>
+                      </span>
+                      <span slot="second" class="img-container">
+                        <img src="static/images/scannet/scannet_0418_0004_ours_d.png" width="100%">
+                        <div class="label label-right">Ours</div>
+                    </span>
+                    </img-comparison-slider>
+                    <img-comparison-slider style="width: 100%;" hover="hover" >
+                    <span slot="first" class="img-container">
+                        <img src="static/images/scannet/scannet_0431_0006_nope_d.png" width="100%">
+                        <div class="label label-left">Nope-NeRF</div>
+                      </span>
+                      <span slot="second" class="img-container">
+                        <img src="static/images/scannet/scannet_0431_0006_ours_d.png" width="100%">
+                        <div class="label label-right">Ours</div>
+                    </span>
+                    </img-comparison-slider>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+ 
+
+    <section class="section">
+        <div class="container is-max-desktop">
+          <div class="container is-max-desktop has-text-centered">
+            <div class="column is-full-width">
+                <h2 class="title is-3 has-text-centered">Long-range flow prediction</h2>
+            </div>
+
+            <div class="content has-text-justified">
+    
+                <p>
+                    Our model achieves holistic scene modelling by simultaneously inferring 2D appearance 
+                    and dense novel-veiw flow. 
+                </p>
+            </div>
+            <br>
+
+            <div class="columns is-centered">
+                <div class="column">
+                  <div class="content">
+                    <img-comparison-slider style="width: 100%;" hover="hover" >
+                    <span slot="first" class="img-container">
+                      <img src="static/images/flow/0004_ballroom.png" width="100%">
+                      <!-- <span class="bottom-left">3DGS</span> -->
+                      <div class="label label-left">RGB</div>
+                    </span>
+                    <span slot="second" class="img-container">
+                      <img src="static/images/flow/00036_00044_flow_ballroom.png" width="100%">
+                      <div class="label label-right">t+8 flow</div>
+                    </span>
+                    </img-comparison-slider>
+                    <img-comparison-slider style="width: 100%;" hover="hover" >
+                    <span slot="first" class="img-container">
+                      <img src="static/images/flow/0004_church.png" width="100%">
+                      <!-- <span class="bottom-left">3DGS</span> -->
+                      <div class="label label-left">RGB</div>
+                    </span>
+                    <span slot="second" class="img-container">
+                      <img src="static/images/flow/00036_00044_flow_church.png" width="100%">
+                      <div class="label label-right">t+8 flow</div>
+                    </span>
+                    </img-comparison-slider>
+                    <img-comparison-slider style="width: 100%;" hover="hover" >
+                    <span slot="first" class="img-container">
+                      <img src="static/images/flow/0017_francis.png" width="100%">
+                      <!-- <span class="bottom-left">3DGS</span> -->
+                      <div class="label label-left">RGB</div>
+                    </span>
+                    <span slot="second" class="img-container">
+                      <img src="static/images/flow/00140_00148_flow_francis.png" width="100%">
+                      <div class="label label-right">t+8 flow</div>
+                    </span>
+                    </img-comparison-slider>
+                    <img-comparison-slider style="width: 100%;" hover="hover" >
+                  <span slot="first" class="img-container">
+                    <img src="static/images/flow/0003_0418.png" width="100%">
+                    <div class="label label-left">RGB</div>
+                  </span>
+                  <span slot="second" class="img-container">
+                    <img src="static/images/flow/00028_00036_flow_0418.png" width="100%">
+                    <div class="label label-right">t+8 flow</div>
+                    </span>
+                    </img-comparison-slider>
+                  </div>
+                </div>
+                <div class="column">
+                  <div class="columns is-centered">
+                    <div class="column content">
+                        <img-comparison-slider style="width: 100%;" hover="hover" >
+                        <span slot="first" class="img-container">
+                          <img src="static/images/flow/0009_barn.png" width="100%">
+                          <!-- <span class="bottom-left">3DGS</span> -->
+                          <div class="label label-left">RGB</div>
+                        </span>
+                        <span slot="second" class="img-container">
+                          <img src="static/images/flow/00076_00084_flow_barn.png" width="100%">
+                          <div class="label label-right">t+8 flow</div>
+                        </span>
+                        </img-comparison-slider>
+                        <img-comparison-slider style="width: 100%;" hover="hover" >
+                        <span slot="first" class="img-container">
+                          <img src="static/images/flow/0010_ignatius.png" width="100%">
+                          <!-- <span class="bottom-left">3DGS</span> -->
+                          <div class="label label-left">RGB</div>
+                        </span>
+                        <span slot="second" class="img-container">
+                          <img src="static/images/flow/00084_00092_flow_ignatius.png" width="100%">
+                          <div class="label label-right">t+8 flow</div>
+                        </span>
+                        </img-comparison-slider>
+                        <img-comparison-slider style="width: 100%;" hover="hover" >
+                        <span slot="first" class="img-container">
+                          <img src="static/images/flow/0003_museum.png" width="100%">
+                          <!-- <span class="bottom-left">3DGS</span> -->
+                          <div class="label label-left">RGB</div>
+                        </span>
+                        <span slot="second" class="img-container">
+                          <img src="static/images/flow/00028_00036_flow_museum.png" width="100%">
+                          <div class="label label-right">t+8 flow</div>
+                        </span>
+                        </img-comparison-slider>
+                        <img-comparison-slider style="width: 100%;" hover="hover" >
+                        <span slot="first" class="img-container">
+                          <img src="static/images/flow/0002_0431.png" width="100%">
+                          <div class="label label-left">RGB</div>
+                        </span>
+                        <span slot="second" class="img-container">
+                          <img src="static/images/flow/00070_00078_flow_0431.png" width="100%">
+                          <div class="label label-right">t+8 flow</div>
+                          </span>
+                          </img-comparison-slider>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <div class="content has-text-justified">
+    
+              <p>
+                  Video demonstration on the novel-view image and the corresponding t+8 novel-view flow predictions.
+              </p>
+          </div>
+            <div class="columns is-centered">
+              <div class="column is-full-width">
+                  <!-- <video autoplay muted loop playsinline height="100%"> -->
+                  <video id="dollyzoom" autoplay controls muted loop height="100%">
+                      <source src="static/videos/img_ballroom.mp4" type="video/mp4">
+                  </video>
+                  <!-- <video autoplay muted loop playsinline height="100%"> -->
+                  <video id="dollyzoom" autoplay controls muted loop height="100%">
+                      <source src="static/videos/img_barn.mp4" type="video/mp4">
+                  </video>
+                  <video id="dollyzoom" autoplay controls muted loop height="100%">
+                    <source src="static/videos/img_horse.mp4" type="video/mp4">
+                  </video>
+                  <video id="dollyzoom" autoplay controls muted loop height="100%">
+                    <source src="static/videos/img_francis.mp4" type="video/mp4">
+                  </video>
+                  <video id="dollyzoom" autoplay controls muted loop height="100%">
+                    <source src="static/videos/img_ignatius.mp4" type="video/mp4">
+                  </video>
+                  <video id="dollyzoom" autoplay controls muted loop height="100%">
+                    <source src="static/videos/img_museum.mp4" type="video/mp4">
+                  </video>
+              </div>
+              <div class="column is-full-width">
+                  <!-- <video autoplay muted loop playsinline height="100%"> -->
+                  <video id="dollyzoom" autoplay controls muted loop height="100%">
+                      <source src="static/videos/fwd_flow_ballroom.mp4" type="video/mp4">
+                  </video>
+                  <!-- <video autoplay muted loop playsinline height="100%"> -->
+                  <video id="dollyzoom" autoplay controls muted loop height="100%">
+                      <source src="static/videos/fwd_flow_barn.mp4" type="video/mp4">
+                  </video>
+                  <video id="dollyzoom" autoplay controls muted loop height="100%">
+                    <source src="static/videos/fwd_flow_horse.mp4" type="video/mp4">
+                  </video>
+                  <video id="dollyzoom" autoplay controls muted loop height="100%">
+                    <source src="static/videos/fwd_flow_francis.mp4" type="video/mp4">
+                  </video>
+                  <video id="dollyzoom" autoplay controls muted loop height="100%">
+                    <source src="static/videos/fwd_flow_ignatius.mp4" type="video/mp4">
+                  </video>
+                  <video id="dollyzoom" autoplay controls muted loop height="100%">
+                    <source src="static/videos/fwd_flow_museum.mp4" type="video/mp4">
+                  </video>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+    </section>
+
+    <section class="section" id="BibTeX">
+        <div class="container is-max-desktop content">
+          <h2 class="title">BibTeX</h2>
+          <pre><code>@inproceedings{zheng2025flownerf,
+        author    = {Xunzhi Zheng and Dan Xu},
+        title     = {Flow-NeRF: Joint Learning of Geometry, Poses, and Dense Flow within Unified Neural Representations},
+        journal   = {CVPR},
+        year      = {2025},
+      }</code></pre>
+        </div>
+    </section>
+
+ 
+      
+    <footer class="footer">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="content">
+                    <p>
+                        The template is borrowed from 
+                        <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>, 
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    
+        
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>  
+
+</body>
+
+</html>
